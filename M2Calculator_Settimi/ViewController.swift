@@ -13,18 +13,31 @@ class ViewController: UIViewController {
     @IBOutlet weak var operand2Text: UITextField!
     @IBOutlet weak var resultText: UILabel!
     
-    var currentOperator: Int = 0
+    var selectedOperator: Operator?
     @IBOutlet weak var selectOperator: UIButton!
+    
     @IBAction func operatorBtn(_ sender: Any) {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
         
-        let plusAction = UIAlertAction(title: "+ (plus)", style: .default) {_ in self.selectOperator.setTitle("+", for: .normal)}
+        let plusAction = UIAlertAction(title: "+ (plus)", style: .default) {_ in
+            self.selectOperator.setTitle("+", for: .normal)
+            self.selectedOperator = .plus
+        }
         
-        let minusAction = UIAlertAction(title: "- (minus)", style: .default) {_ in self.selectOperator.setTitle("-", for: .normal)}
+        let minusAction = UIAlertAction(title: "- (minus)", style: .default) {_ in
+            self.selectOperator.setTitle("-", for: .normal)
+            self.selectedOperator = .minus
+        }
         
-        let multiplyAction = UIAlertAction(title: "* (multiply)", style: .default) {_ in self.selectOperator.setTitle("*", for: .normal)}
+        let multiplyAction = UIAlertAction(title: "* (multiply)", style: .default) {_ in
+            self.selectOperator.setTitle("*", for: .normal)
+            self.selectedOperator = .multiply
+        }
         
-        let divideAction = UIAlertAction(title: "/ (divide)", style: .default) {_ in self.selectOperator.setTitle("/", for: .normal)}
+        let divideAction = UIAlertAction(title: "/ (divide)", style: .default) {_ in
+            self.selectOperator.setTitle("/", for: .normal)
+            self.selectedOperator = .divide
+        }
         
         actionSheet.addAction(plusAction)
         actionSheet.addAction(minusAction)
@@ -46,7 +59,7 @@ class ViewController: UIViewController {
     @IBAction func calculateBtn(_ sender: UIButton) {
         
         
-        guard let op = selectOperator.title(for: .normal), op != "?" else
+        guard let op = selectedOperator else
         {
             showAlert(message: "Please select an operator.")
             
@@ -59,6 +72,7 @@ class ViewController: UIViewController {
             showAlert(message: "Please enter the first operand.")
             
             operand1Text.text = "0"
+            operand1Text.becomeFirstResponder()
             return
         }
         
@@ -66,6 +80,7 @@ class ViewController: UIViewController {
         {
             showAlert(message: "Please enter the second operand.")
             operand2Text.text = "0"
+            operand2Text.becomeFirstResponder()
             return
         }
         
@@ -73,19 +88,27 @@ class ViewController: UIViewController {
         
         switch (op)
         {
-            case "+":
+            case .plus:
                 result = var1 + var2
-            case "-":
+            case .minus:
                 result = var1 - var2
-            case "*":
+            case .multiply:
                 result = var1 * var2
-            case "/":
+            case .divide:
                 result = var1 / var2
-            default:
-                result = 0
         }
         
         resultText.text = "\(result)"
+        
+        if operand1Text.isFirstResponder
+        {
+            operand1Text.resignFirstResponder()
+        }
+        
+        if operand2Text.isFirstResponder
+        {
+            operand2Text.resignFirstResponder()
+        }
     }
     
     override func viewDidLoad() {
@@ -93,6 +116,10 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        operand1Text.becomeFirstResponder()
+    }
 }
 
