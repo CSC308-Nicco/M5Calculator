@@ -123,3 +123,17 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController: UITextFieldDelegate
+{
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool
+    {
+        guard !string.isEmpty else { return true }
+        
+        guard let _ = Int(string) else
+        {
+            return false
+        }
+        
+        return true
+    }
+}
